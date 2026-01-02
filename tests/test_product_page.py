@@ -1,4 +1,4 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 from pages.home_page import HomePage
 from pages.product_page import ProductPage
 
@@ -14,6 +14,5 @@ def test_search_and_add_to_cart(page: Page):
     product.add_to_cart()
     product.open_cart()
 
-    # Очень простая проверка: мини‑корзина должна открыться, элемент виден
-    assert page.locator(".minicart-wrapper").first.is_visible()
-
+    # Проверяем, что мини‑корзина открылась
+    expect(page.locator(".minicart-wrapper").first).to_be_visible()

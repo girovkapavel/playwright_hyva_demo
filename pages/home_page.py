@@ -1,3 +1,4 @@
+from playwright.sync_api import expect
 from pages.base_page import BasePage
 
 class HomePage(BasePage):
@@ -5,26 +6,29 @@ class HomePage(BasePage):
 
     SEARCH_TOGGLE = "button[aria-label='Toggle search form']"
     SEARCH_INPUT = "input[name='q']"
-    FIRST_PRODUCT = ".product-item-link"
+
     PRODUCT_LINK = ".product-item-link"
+    ADD_TO_CART_PDP = "#product-addtocart-button"
 
-    WOMEN_LINK = "https://demo.hyva.io/default/women.html"
-
-    def __init__(self, page):
-        super().__init__(page)
+    MINICART_TOGGLE = ".action.showcart"
+    VIEW_CART_LINK = "a.action.viewcart"
 
     def open(self):
         self.goto(self.URL)
 
     def open_search(self):
-        self.click(self.SEARCH_TOGGLE)
+        toggle = self.page.locator(self.SEARCH_TOGGLE)
+        toggle.wait_for(state="visible")
+        toggle.click()
 
-    def search(self,query: str):
+    def search(self, query: str):
         self.fill(self.SEARCH_INPUT, query)
         self.page.keyboard.press("Enter")
 
     def open_first_product(self):
-        self.page.locator(self.FIRST_PRODUCT).first.click()
+        product = self.page.locator(self.PRODUCT_LINK).first
+        product.wait_for(state="visible")
+        product.click()
 
     def click_whats_new(self):
         self.page.get_by_role("link", name="What's New").click()
@@ -56,7 +60,7 @@ class HomePage(BasePage):
         products.first.click()
 
         # Ждём полную загрузку PDP
-        add_to_cart_btn = self.page.locator("#product-addtocart-button")
+        add_to_cart_btn = self.page.locator(self.ADD_TO_CART_PDP)
         add_to_cart_btn.wait_for(state="visible")
 
         # Добавляем в корзину
@@ -65,13 +69,25 @@ class HomePage(BasePage):
     def add_to_cart_on_plp(self, query: str):
         self.open_search()
         self.search(query)
-        self.page.get_by_role("button", name="Add to Cart").first.click()
+        button = self.page.get_by_role("button", name="Add to Cart").first
+        button.wait_for(state="visible")
+        button.click()
 
+    def open_cart_from_header(self):
+        # Открыть мини-корзину и перейти в полную корзину
+        self.page.locator(self.MINICART_TOGGLE).first.click()
+        # На Hyvä появляется дропдаун с ссылкой View Cart / Go to Checkout
+        # Пробуем кликнуть по ссылке View Cart, иначе fallback — прямой переход
+        view_cart = self.page.locator(self.VIEW_CART_LINK)
+        if view_cart.count() > 0:
+            view_cart.first.click()
+        else:
+            self.page.goto("https://demo.hyva.io/checkout/cart/")
 
+    def add_first_product_to_cart_from_plp(self):
+        add_button = self.page.locator("button[title='Add to Cart']").first
+        add_button.wait_for(state="visible")
+        add_button.click()
 
-
-
-
-
-
-
+        # Hyvä меняет текст кнопки после добавления
+        expect(add_button).to_have_text("Added")

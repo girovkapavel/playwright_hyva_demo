@@ -1,11 +1,18 @@
-from pages.base_page import BasePage
+from pages.home_page import HomePage
 from playwright.sync_api import expect
 
+class CartPage:
+    MINICART_TOGGLE = ".action.showcart"
 
-class CartPage(BasePage):
-    CART_ITEM = ".product-item-name"
+    def __init__(self, page):
+        self.page = page
+        self.home = HomePage(page)
 
-    def assert_cart_not_empty(self):
-        locator = self.page.locator(self.CART_ITEM)
-        locator.wait_for(state="visible")
-        expect(locator).to_be_visible()
+    def open_cart_with_one_product(self):
+        self.home.open_search()
+        self.home.search("bag")
+        self.home.add_first_product_to_cart_from_plp()
+
+        minicart = self.page.locator(self.MINICART_TOGGLE).first
+        minicart.wait_for(state="visible")
+        minicart.click()
