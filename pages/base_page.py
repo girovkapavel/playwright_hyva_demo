@@ -13,5 +13,5 @@ class BasePage:
     def fill(self, selector: str, text: str):
         self.page.locator(selector).first.fill(text)
 
-    def text(self, selector: str) -> str:
+    def get_text(self, selector: str) -> str:
         return self.page.locator(selector).first.inner_text()

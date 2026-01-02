@@ -1,6 +1,5 @@
 from pages.base_page import BasePage
 
-
 class ProductPage(BasePage):
     ADD_TO_CART = "button[title='Add to Cart']"
     CART_TOGGLE = ".action.showcart"

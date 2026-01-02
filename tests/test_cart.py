@@ -1,10 +1,6 @@
-def test_add_to_cart(home_page, product_page, cart_page):
-    home_page.open_home()
-    home_page.click_search()
-    home_page.search("Bag")
-    home_page.open_first_product()
-
-    product_page.add_to_cart()
-    product_page.open_cart()
-
-    cart_page.assert_cart_not_empty()
+def test_open_cart_with_one_product(cart):
+    cart.open_cart_with_one_product()
+    # Можно добавить проверку, что товар добавлен
+    assert cart.page.locator(".cart.item").count() > 0
+    
+    #test_ 
