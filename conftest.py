@@ -3,32 +3,18 @@ import webbrowser
 from pathlib import Path
 from pages.home_page import HomePage
 from pages.cart_page import CartPage
-from pages.login_page import LoginPage
-from pages.search_page import SearchPage
-
 
 
 @pytest.fixture
 def home(page):
+    page.set_viewport_size({"width": 1920, "height": 1080})
     home_page = HomePage(page)
     home_page.open()
     return home_page
 
 @pytest.fixture
-def login(page):
-    login_page = LoginPage(page)
-    login_page.open()
-    return login_page
-
-@pytest.fixture
-def search(page):
-    search_page = SearchPage(page)
-    search_page.open()
-    return search_page
-
-
-@pytest.fixture
 def cart(page):
+    page.set_viewport_size({"width": 1920, "height": 1080})
     return CartPage(page)
 
 
